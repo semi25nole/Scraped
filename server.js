@@ -4,6 +4,8 @@ var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 var mongojs = require("mongojs");
+var request = require("request");
+
 
 
 //Require axios and cheerio, our scraping tools
@@ -22,102 +24,86 @@ var PORT = 3000;
 //Initialize express
 var app = express();
 
+// Database configuration
+var databaseUrl = "article";
+var collections = ["data"];
 
-//Configure the database
-var databaseUrl = "Articles";
-var collections = ["Data"];
-
-
-//Hook into the database
+// Hook mongojs configuration to the db variable
 var db = mongojs(databaseUrl, collections);
 db.on("error", function(error) {
     console.log("Database Error:", error);
 });
 
-
-//Retrieve data from the DB
-app.get("/all", function(req, res) {
-    // Find all results from the scrapedData collection in the db
-    db.Data.find({}, function(error, found) {
-        // Throw any errors to the console
-        if (error) {
-            console.log(error);
-        }
-        // If there are no errors, send the data to the browser as json
-        else {
-            res.json(found);
-        }
-    });
-});
-
-
-//Use morgan logger for logging requests
+// Use morgan logger for logging requests
 app.use(logger("dev"));
-//Use body-parser for handling form submissions
-app.use(bodyParser.urlencoded({extended: false}));
-//Use express.static to serve the public folder as a static directory
+// Use body-parser for handling form submissions
+app.use(bodyParser.urlencoded({ extended: false }));
+// Use express.static to serve the public folder as a static directory
 app.use(express.static("public"));
 
 
-//Set mongoose to leverage built in JavaScript
-//Connect to the Mongo DB
 mongoose.Promise = Promise;
-mongoose.connect("mongodb://localhost/Scraped", {
+mongoose.connect("mongodb://localhost/scraper", {
     useMongoClient: true
 });
 
 
 //Routes
-//Create a get route to scrape the website
+app.get("/all", function(req, res) {
+
+    db.data.find({}, function(error, found) {
+
+        if(error) {
+            console.log(error);
+        } else {
+            res.json(found);
+
+        }
+    });
+});
+
+
+// Scrape data from one site and place it into the mongodb db
 app.get("/scrape", function(req, res) {
-    axios.get("http://www.espn.com/college-football/team/_/id/52/florida-state-seminoles").then(function(response) {
+    // Make a request for the news section of ycombinator
+    request("https://www.theonion.com/c/sports-news-in-brief", function(error, response, html) {
 
-        var $ = cheerio.load(response.data);
+        db.data.remove({});
 
-        $("h2.c-entry-box--compact__title").each(function(i, element) {
+        // Load the html body from request into cheerio
+        var $ = cheerio.load(html);
+        // For each element with a "title" class
+        $(".storytype__content article").each(function(i, element) {
 
-            var results = [];
+            var title = $(element).children().children().children().children(".entry-title a").text();
+            var link = $(element).children().children().children("a").attr("href");
+            var excerpt = $(element).children().children().children().children(".entry-summary p").text();
 
-            results.title = $(this)
-                .children("a")
-                .text();
-            results.link = $(this)
-                .children("a")
-                .attr("href");
 
-            db.Article
-                .create(results)
-                .then(function(dbArticle) {
-
-                    res.send("Scrape Complete");
-                })
-                .catch(function(err) {
-                    res.json(err);
-                });
+            // If this found element had both a title and a link
+            if (title && link && excerpt) {
+                // Insert the data in the scrapedData db
+                db.data.insert({
+                        title: title,
+                        link: link,
+                        excerpt: excerpt
+                    }),
+                    function(err, inserted) {
+                        if (err) {
+                            // Log the error if one is encountered during the query
+                            console.log(err);
+                        }
+                        else {
+                            // Otherwise, log the inserted data
+                            console.log(inserted);
+                        }
+                    };
+            }
         });
-
     });
 
-});
-
-
-app.get("/articles", function(req, res) {
-    db.Article.find({}).then(function(dbArticle) {
-        res.json(dbArticle);
-    })
-        .catch(function(err) {
-            res.json(err);
-        });
-});
-
-
-app.get("articles/:id", function(req, res) {
-    db.Article.findOne({_id: req.params.id}).populate("note").then(function(dbArticle) {
-        res.json(dbArticle);
-    })
-        .catch(function(err) {
-        res.json(err);
-    });
+    // Send a "Scrape Complete" message to the browser
+    res.send("Scrape Complete");
 });
 
 
