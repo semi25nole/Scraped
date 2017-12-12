@@ -65,7 +65,7 @@ app.get("/all", function(req, res) {
 
 // Scrape data from one site and place it into the mongodb db
 app.get("/scrape", function(req, res) {
-    // Make a request for the news section of ycombinator
+    // Make a request for the sports section of the onion
     request("https://www.theonion.com/c/sports-news-in-brief", function(error, response, html) {
 
         db.data.remove({});
