@@ -13,12 +13,17 @@ var ArticlesSchema = new Schema({
         required: true
     },
 
+    summary: {
+        type: String,
+        required: true
+    },
+
     note: {
         type: Schema.Types.ObjectId,
         ref: "Note"
     }
 });
 
-var Articles = mongoose.model("Articles", ArticlesSchema);
+var Articles = mongoose.model("articles", ArticlesSchema);
 
 module.exports = Articles;
