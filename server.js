@@ -4,7 +4,7 @@ var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 var request = require("request");
-var expressHandlebars = require("express-handlebars");
+var eH = require("express-handlebars");
 
 
 
