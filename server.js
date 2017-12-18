@@ -5,6 +5,7 @@ var logger = require("morgan");
 var mongoose = require("mongoose");
 var request = require("request");
 var eH = require("express-handlebars");
+var mongojs = require("mongojs");
 
 
 
@@ -61,7 +62,6 @@ app.get("/all", function(req, res) {
         }
     });
 });
-
 
 // Scrape data from one site and place it into the mongodb db
 app.get("/scrape", function(req, res) {

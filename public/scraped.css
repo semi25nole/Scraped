@@ -1,0 +1,26 @@
+body {
+    background-image: url("background.jpeg");
+}
+
+.jumbotron {
+    margin-top: 25px;
+    background-color: beige;
+    opacity: .6;
+    color: saddlebrown;
+    border-radius: 10px;
+}
+
+#tagline {
+    font-family: 'Satisfy', cursive;
+    font-size: 51px;
+}
+
+h1 {
+    font-family: righteous;
+    font-size: 64px;
+}
+
+.card {
+    background-color: beige;
+    color: saddlebrown;
+}
