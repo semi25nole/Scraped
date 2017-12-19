@@ -6,6 +6,7 @@ var mongoose = require("mongoose");
 var request = require("request");
 var eH = require("express-handlebars");
 var mongojs = require("mongojs");
+var path = require("path");
 
 
 
@@ -50,6 +51,14 @@ mongoose.connect("mongodb://localhost/scraper", {
 
 
 //Routes
+
+    app.get("/", function (req, res) {
+        res.sendFile(path.join(__dirname, "/public/home.html")); //base page
+    });
+
+
+
+
 app.get("/all", function(req, res) {
 
     db.data.find({}, function(error, found) {
