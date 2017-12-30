@@ -1,31 +1,41 @@
 body {
-    background-image: url("background.jpeg");
+    background: url("background.jpeg") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
-.jumbotron {
+.jumbotron, .row {
     margin-top: 25px;
-    background-color: beige;
-    opacity: .6;
-    color: saddlebrown;
+    background-color: mintcream;
+    color: black;
     border-radius: 10px;
 }
 
+.jumbotron:hover, .row:hover {
+    opacity: .5;
+}
+
 #tagline {
-    font-family: 'Satisfy', cursive;
+    font-family: 'Satisfy', cursive, sans-serif;
     font-size: 51px;
 }
 
 h1 {
-    font-family: righteous;
+    font-family: Walter Turncoat;
     font-size: 64px;
-}
-
-.card {
-    background-color: beige;
-    color: saddlebrown;
 }
 
 #butt {
     position: relative;
     top: 30px;
+}
+
+.title {
+    font-family: Walter Turncoat;
+}
+
+a {
+    color: maroon;
 }
