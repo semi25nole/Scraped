@@ -8,12 +8,12 @@ body {
 
 .jumbotron, .row {
     margin-top: 25px;
-    background-color: mintcream;
+    background-color: cornsilk;
     color: black;
     border-radius: 10px;
 }
 
-.jumbotron:hover, .row:hover {
+.row:hover {
     opacity: .5;
 }
 
@@ -30,12 +30,18 @@ h1 {
 #butt {
     position: relative;
     top: 30px;
+    background: burlywood;
 }
 
 .title {
     font-family: Walter Turncoat;
 }
 
-a {
-    color: maroon;
+p {
+    font-weight:  bold;
+    font-family: Walter Turncoat;
+}
+
+#submit {
+    background: burlywood;
 }

@@ -57,8 +57,6 @@ mongoose.connect("mongodb://localhost/scraper", {
     });
 
 
-
-
 app.get("/all", function(req, res) {
 
     db.data.find({}, function(error, found) {
@@ -87,7 +85,7 @@ app.get("/scrape", function(req, res) {
             var title = $(element).children().children().children().children(".entry-title a").text();
             var link = $(element).children().children().children("a").attr("href");
             var excerpt = $(element).children().children().children().children(".entry-summary p").text();
-
+            var photo = $(this).children().children().children().children().children().children("source").attr("data-srcset");;
 
             // If this found element had both a title and a link
             if (title && link && excerpt) {
@@ -95,7 +93,8 @@ app.get("/scrape", function(req, res) {
                 db.data.insert({
                         title: title,
                         link: link,
-                        excerpt: excerpt
+                        excerpt: excerpt,
+                        photo: photo
                     }),
                     function(err, inserted) {
                         if (err) {
@@ -114,6 +113,91 @@ app.get("/scrape", function(req, res) {
     // Send a "Scrape Complete" message to the browser
     res.send("Scrape Complete");
 });
+
+
+app.post("/update/:id", function(req, res) {
+    db.data.update({
+        "_id":mongojs.ObjectID(req.params.id)
+    }, function(error, found) {
+        if(error) {
+            console.log(error);
+            res.send(error);
+        } else {
+            console.log(found);
+            res.send(found);
+        }
+    });
+});
+
+
+
+//Separate routes than the articles
+//Routes for the notes portion
+app.post("/submit", function(req, res) {
+    console.log(req.body);
+    db.note.insert(req.body, function(error, saved) {
+        if(error) {
+        console.log(error);
+        }
+    });
+});
+
+
+app.get("/note", function(req, res) {
+    db.note.find({}, function(error, found) {
+        if(error) {
+            console.log(error);
+        } else {
+            res.json(found);
+        }
+    });
+});
+
+
+app.get("/find/:id", function(req, res) {
+    db.note.find({"_id": mongojs.ObjectID(req.params.id)
+    }, function(error, found) {
+        if(error) {
+            console.log(error);
+            res.send(error);
+        } else {
+            console.log(found);
+            res.send(found);
+        }
+    });
+});
+
+
+app.get("/update/:id", function(req, res) {
+    db.note.update({
+        "_id": mongojs.ObjectID(req.params.id)
+    }, {
+        $set: {
+            "note": req.body.note,
+            "modified": Date.now()
+        }
+    }, function(error, edited) {
+        if(error) {
+            console.log(error);
+            res.send(error);
+        } else {
+            console.log(edited);
+            res.send(edited);
+        }
+    });
+});
+
+
+app.get("/clear", function(req, res) {
+    db.note.remove({}, function(error, response) {
+        if(error) {
+            res.send(error);
+        } else {
+            res.send(response);
+        }
+    });
+});
+
 
 
 app.listen(PORT, function() {
