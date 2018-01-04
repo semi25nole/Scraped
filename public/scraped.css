@@ -13,8 +13,8 @@ body {
     border-radius: 10px;
 }
 
-.row:hover {
-    opacity: .5;
+.row {
+    opacity: .8;
 }
 
 #tagline {
@@ -44,4 +44,15 @@ p {
 
 #submit {
     background: burlywood;
+}
+
+#noted {
+    position: relative;
+    left: 520px;
+    bottom: 17470px;
+}
+
+#refresh {
+    position: relative;
+    top: 30px;
 }

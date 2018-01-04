@@ -20,7 +20,7 @@ var db = require("./models");
 
 
 //Dictate your port
-var PORT = 3000;
+var PORT = 3002;
 
 
 //Initialize express
@@ -95,7 +95,7 @@ app.get("/scrape", function(req, res) {
                         link: link,
                         excerpt: excerpt,
                         photo: photo
-                    }),
+                    },
                     function(err, inserted) {
                         if (err) {
                             // Log the error if one is encountered during the query
@@ -105,10 +105,10 @@ app.get("/scrape", function(req, res) {
                             // Otherwise, log the inserted data
                             console.log(inserted);
                         }
-                    };
-            }
+                    });
+                }
+            });
         });
-    });
 
     // Send a "Scrape Complete" message to the browser
     res.send("Scrape Complete");
